@@ -1,0 +1,395 @@
+---
+marp: true
+
+theme: base
+size: 16:9
+paginate: true
+style: |
+  section {
+    background-color: #FFFFFF;
+  }
+
+--- 
+
+# React.jsハンズオン
+
+---
+
+# 自己紹介
+大学時代にReactを触り始め、
+大体1年間くらいReactを書いていました。
+
+
+---
+
+# 今日やること
+
+1. Reactの説明
+1. Reactの基礎文法
+1. ハンズオン
+    1. カウンターアプリ初期版
+    1. コンポーネントの再利用
+    1. Props受け渡し
+
+---
+
+
+# Reactとは？
+- Vue, Angularと並んで多くのフロントエンド開発で使用されているfacebook製のライブラリ
+- コンポーネント指向でページを作成する
+- React Nativeを使えば、Reactの知識を生かしてスマホアプリを作れる（FaceBook,Instagram,DiscordのiOS版,Uber EatsのスマホアプリもReact Nativeで作られている）
+
+>参考:https://reactnative.dev/showcase.html
+
+--- 
+
+# Reactはどのくらい使われているのか
+　![](https://user-images.githubusercontent.com/29624403/83347902-34bb4780-a363-11ea-8533-c33cfd1df3d1.png)
+
+>https://www.npmtrends.com/angular-vs-react-vs-vue
+
+<!-- ---
+
+# 最強のDX
+Vueでは補完の効かないhtml部分でも補完が効く
+
+![](https://qiita-user-contents.imgix.net/https%3A%2F%2Fqiita-image-store.s3.amazonaws.com%2F0%2F26383%2F159e4e5a-ca59-bee2-5556-c2bdfe9dd454.png?ixlib=rb-1.2.2&auto=format&gif-q=60&q=75&s=d3a2120b08670260ae6a70b54daa5bd3)
+> なぜReact+TypeScriptでコンポーネント作成が早くなるのか https://qiita.com/alfe_below/items/1cb81a6a03d8d6d73b27 -->
+
+--- 
+
+
+# 2点だけ、簡単な文法説明
+
+---
+
+# Reactの基礎1
+ コンポーネントの書き方は大きく2つあるが、現在はFunction Componentが主流なのでFCのみ説明する。
+ - Function Component
+
+```js
+const Welcome = () => {
+  return (
+    <h1>Hello, World</h1>
+  )
+}
+```
+
+```js
+function Welcome() {
+  return (
+    <h1>Hello, World</h1>
+  )
+}
+```
+
+
+
+--- 
+# Reactの基礎2
+## stateとprops
+ 
+ ## state
+stateはコンポーネントが持つ状態のこと
+ ```js
+const Welcome = () => {
+  const [message, setMessage] = useState("Hello World!")
+  return (
+    <h1>{message}</h1>
+  )
+}
+ ```
+
+ --- 
+## Props
+propsはコンポーネント間で共有される変数
+
+- 親コンポーネント
+
+```js
+const Parent = (props) => {
+  const [message, setMessage] = useState("Hello World!")
+
+  return (
+    <Child message={message}>  // 子コンポーネントに渡す
+  )
+}
+```
+
+- 子コンポーネント
+```js
+const Child = (props) => {
+  return (
+    <h1>{props.message}</h1> // 親コンポーネントからのデータを表示
+  )
+}
+```
+
+
+---
+# ここからハンズオン
+
+
+---
+
+
+# 今回の目標：カウンターアプリ
+
+
+![](https://user-images.githubusercontent.com/29624403/83347588-e73ddb00-a360-11ea-947e-66b43949223c.png)
+
+<!-- 今回は基礎の基礎ということで、基本的な動作をするカウンターアプリを作りたいと思います。
+もし、次があるなら、いずれはTypeScriptとの連携やvueでいうところのVuex、つまり、状態管理を行うライブラリであるReduxやReactHooksなどのハンズオンを開けたらいいなと思います。 -->
+
+ >完成版 https://codesandbox.io/s/xenodochial-meadow-1nknv
+
+
+---
+
+# 今回はブラウザ上でjsが動作するcodesandboxで作成します
+# codesandbox
+- https://codesandbox.io/　にアクセス、
+- Reactのテンプレートを選択
+
+`npx create-react-app counter-app`　でも可
+
+---
+# ここ
+　![代替テキスト](https://user-images.githubusercontent.com/29624403/83347908-43a1fa00-a363-11ea-8535-fb149b810d1b.png)
+
+--- 
+#  App.jsを書き換える
+## まずは見た目だけ
+```js
+export const App = () => {
+  return (
+    <div className="App">
+        <div>counter</div>
+        <button>+</button>
+        <button>-</button>
+    </div>
+  );
+}
+```
+---
+## コンポーネントに状態を持たせる
+
+```js
+ export const App = () => {
+   const [counter, setCounter] = useState(0); // 初期値は0
+ 
+   return (
+     <div className="App">
+       <div>{counter}</div>    // jsx内で値を呼ぶときは{}で囲む
+       <button>+</button>
+       <button>-</button>
+     </div>
+   );
+ };
+ ```
+
+---
+## buttonのonClick属性にcounterを操作するメソッドを渡す
+
+```js
+ export const App = () => {
+   const [counter, setCounter] = useState(0);
+ 
+   const handlePlusClick = () => {
+     setCounter(counter + 1);
+   };
+ 
+   const handleMinusClick = () => {
+     setCounter(counter - 1);
+   };
+ 
+   return (
+     <div className="App">
+       <div>{counter}</div>
+       <button onClick={handlePlusClick}>+</button>
+       <button onClick={handleMinusClick}>-</button>
+     </div>
+   );
+ };
+
+```
+
+---
+
+# カウンターアプリ完成版
+
+```js
+ import React, { useState } from "react";
+ import "./styles.css";
+ 
+ export const App = () => {
+   const [counter, setCounter] = useState(0);
+ 
+   const handlePlusClick = () => {
+     setCounter(counter + 1);
+   };
+ 
+    // 普通にfunctionを使用してもOK、基本アローファンクションが多い
+   const handleMinusClick = function() {
+     setCounter(counter - 1);
+   };
+ 
+   return (
+     <div className="App">
+       <div>{counter}</div>
+       <button onClick={handlePlusClick}>+</button>
+       <button onClick={handleMinusClick}>-</button>
+     </div>
+   );
+ };
+ ```
+---
+
+# ㊗️カウンターアプリ完成㊗️
+
+---
+
+# カウンターをいくつも作りたいときどうするか
+
+![](https://user-images.githubusercontent.com/29624403/83354890-b8425c00-a396-11ea-939a-4376a790a632.png)
+
+--- 
+# Counterを切り出す
+```js
+// Counter.jsx
+ import React, { useState } from "react";
+ 
+ export const Counter = () => {
+   const [counter, setCounter] = useState(0);
+ 
+   const handlePlusClick = () => {
+     setCounter(counter + 1);
+   };
+ 
+   const handleMinusClick = () => {
+     setCounter(counter - 1);
+   };
+ 
+   return (
+     <div className="App">
+       <div>{counter}</div>
+       <button onClick={handlePlusClick}>+</button>
+       <button onClick={handleMinusClick}>-</button>
+     </div>
+   );
+ };
+ 
+ ```
+
+ ---
+
+ # App.jsx
+
+```js
+ import React, { useState } from "react";
+ import { Counter } from "./components/Counter";
+ import "./styles.css";
+ 
+ export const App = () => {
+   return (
+     <div className="App">
+       <Counter />  // 再利用可能
+       <Counter />
+       <Counter />
+     </div>
+   );
+ };
+ ```
+
+--- 
+# これでCounterがいくつあっても対応できる
+
+## 再利用可能なコンポーネント
+
+
+
+
+---
+
+# 余談：1つのカウンターの値を共有したいときは？
+- トップページ(App)が持つカウンターの状態を子コンポーネントで共有したい
+- Propsの出番
+
+--- 
+
+App
+```js
+ import React, { useState } from "react";
+ import { Counter } from "./components/Counter";
+ import "./styles.css";
+ 
+ export const App = () => {
+   const [counter, setCounter] = useState(0);
+ 
+   const handlePlusClick = () => {
+     setCounter(counter + 1);
+   };
+ 
+   const handleMinusClick = () => {
+     setCounter(counter - 1);
+   };
+ 
+   return (
+     <div className="App">
+       <Counter 
+         counter={counter}       　　　　　　 // propsで渡す
+         handleClick={handlePlusClick}
+         handleMinusClick={handleMinusClick}
+       />
+     </div>
+   );
+ };
+ ```
+
+ ---
+
+
+Counter
+```js
+ import React from "react";
+ 
+ export const Counter = ({ counter, handlePlusClick, handleMinusClick }) => {
+   return (
+     <div className="App">
+       <div>{counter}</div>
+       <button onClick={handlePlusClick}>+</button>
+       <button onClick={handleMinusClick}>-</button>
+     </div>
+   );
+ };
+ ```
+ --- 
+
+## この方法だと、コンポーネントが多くなるとpropsをバケツリレーのように、親->子->孫と渡さないといけない。
+
+## そこで、状態管理のために Redux（Vue.jsでいうVuexにあたる）などのライブラリがある
+
+## 最近はReact Hooksで解決する場面も多い
+
+
+---
+
+# React.js カウンターアプリ作成ハンズオンでした
+
+---
+ # 関連資料
+ - なぜ仮想DOMという概念が俺達の魂を震えさせるのか https://qiita.com/mizchi/items/4d25bc26def1719d52e6
+
+ - 覚えておきたいReactの実装でよく使う基本的な構文（書き方）
+ https://mae.chab.in/archives/2956
+
+- ReactとVueのどちらを選ぶか
+ https://qiita.com/yoichiwo7/items/236b6535695ea67b4fbe
+
+- なぜ default export を使うべきではないのか？
+ https://engineering.linecorp.com/ja/blog/you-dont-need-default-export/
+
+- なぜReact+TypeScriptでコンポーネント作成が早くなるのか https://qiita.com/alfe_below/items/1cb81a6a03d8d6d73b27
+
+- フックの導入
+https://ja.reactjs.org/docs/hooks-intro.html
